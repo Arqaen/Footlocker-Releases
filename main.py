@@ -3,8 +3,6 @@ import requests
 import time
 import json
 
-url = "https://www.footlocker.nl/apigate/release-calendar"
-
 headers = {
     "User-Agent": "Mozilla/5.0 (Android 5.0; Mobile; rv:41.0) Gecko/41.0 Firefox/41.0"
 }
@@ -26,9 +24,12 @@ except:
 
 webhook_url = config['webhook_url']
 avatar = config['avatar_url']
-hookname = config['name']
+country = config['country']
 timeout = config['timeout']
+hookname = config['name']
 sleep = config['sleep']
+
+url = f"https://www.footlocker.{country}/apigate/release-calendar"
 
 def getRealeses(url, headers):
     try:
@@ -44,8 +45,6 @@ while True:
 
     data = getRealeses(url, headers)
     now = time.time()
-
-
 
     if data:
 
@@ -108,4 +107,3 @@ while True:
         time.sleep(timeout)
 
     time.sleep(sleep)
-
