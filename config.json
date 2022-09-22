@@ -1,0 +1,8 @@
+{
+    "webhook_url" : "",
+    "avatar_url": "",
+    "country" : "es",
+    "name": "Ftl",
+    "timeout" : 30,
+    "sleep" : 5
+}
