@@ -3,6 +3,7 @@
 ![footlocker](https://www.footlocker.es/built/232/images/FLEU/logo.svg)
 
 A monitor that tracks every new realese of footlocker product and notifiy to discord with webhooks.
+
 The monitor.txt will save the ids of the notified products.
 
 ##  Requirements
