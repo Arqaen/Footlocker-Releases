@@ -28,3 +28,5 @@ Examples:
 Also you can adjust the times of the monitor.
 
 
+Start:
+`py main.py`
