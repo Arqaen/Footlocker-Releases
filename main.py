@@ -33,7 +33,7 @@ url = f"https://www.footlocker.{country}/apigate/release-calendar"
 headers = {"User-Agent": "Mozilla/5.0 (Android 5.0; Mobile; rv:41.0) Gecko/41.0 Firefox/41.0"}
 
 # Function to send the webhook and save the id
-def sendWebhook(url, data):
+def sendWebhook(url, data, id):
 
     global monitor
     response = requests.post(url, json = data)
@@ -109,7 +109,7 @@ while True:
                 if(id not in monitor and fix > now):
 
                     # Send the webhook
-                    code = sendWebhook(webhook_url, info)
+                    code = sendWebhook(webhook_url, info, id)
                     print(f"Name: {name} - Id: {id}")  
                     print(f"Sent webhook {code}\n")  
 
