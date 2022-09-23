@@ -3,10 +3,7 @@ import requests
 import time
 import json
 
-headers = {
-    "User-Agent": "Mozilla/5.0 (Android 5.0; Mobile; rv:41.0) Gecko/41.0 Firefox/41.0"
-}
-
+# Import the ids already in the monitor
 monitor = []
 try:
     with open('monitor.txt', 'r') as f:
@@ -15,6 +12,7 @@ try:
 except:
     pass
 
+# Import the data from the config.json file
 try:
     with open('config.json') as config_file:
         config = json.load(config_file)
@@ -22,6 +20,7 @@ except:
     print("No config.json found")
     exit()
 
+# Config variables
 webhook_url = config['webhook_url']
 avatar = config['avatar_url']
 country = config['country']
@@ -29,8 +28,28 @@ timeout = config['timeout']
 hookname = config['name']
 sleep = config['sleep']
 
+#  Url and headers for the request
 url = f"https://www.footlocker.{country}/apigate/release-calendar"
+headers = {"User-Agent": "Mozilla/5.0 (Android 5.0; Mobile; rv:41.0) Gecko/41.0 Firefox/41.0"}
 
+# Function to send the webhook and save the id
+def sendWebhook(url, data):
+
+    global monitor
+    response = requests.post(url, json = data)
+    time.sleep(0.5)
+    if(response.status_code == 429):
+        print("Rate limited")
+        time.sleep(10)
+            
+    else:
+        monitor.append(str(id)) 
+        with open('monitor.txt', 'a') as f:
+            f.write(f"{id}\n")
+
+    return response.status_code
+
+# Function to get the request and catchs the errors
 def getRealeses(url, headers):
     try:
         response = requests.get(url, headers=headers)
@@ -41,33 +60,31 @@ def getRealeses(url, headers):
     except:
         return None
 
+# Main loop for track the releases 
 while True:
 
+    # Get the data from the request and the time
     data = getRealeses(url, headers)
     now = time.time()
 
+    # If the data is not None
     if data:
 
         try:
-            size = len(data['releaseCalendarProducts'])
-            print(size)
-            
+            # For loop for get all the releases
+            size = len(data['releaseCalendarProducts'])            
             for release in data['releaseCalendarProducts']:
 
+                # Get the data of the release
                 name = release['name']
                 brand = release['brandName']
                 id = release['id']
                 img = release['image']
                 gender = release['gender']
                 launch = release['skuLaunchDate']
-                link = "https://www.footlocker.nl" + release['pdpLink']
-
-                
-                if "hasStock" in release:
-                    stock = release['hasStock']
-                else:
-                    continue
-                
+                link = "https://www.footlocker.nl" + release['pdpLink']                
+    
+                # Format the data
                 info = {
                     "username": hookname,
                     "avatar_url": avatar,
@@ -81,27 +98,25 @@ while True:
                         }
                     ]
                 }
-                
-                fix = time.mktime(datetime.strptime(launch, "%b %d %Y %H:%M:%S GMT+0000").timetuple())
+                                                
+                if "hasStock" in release:
+                    stock = release['hasStock']
+                else:
+                    continue
+
+                # If the release has no stock and its not launched yet and its not in the monitor
+                fix = time.mktime(datetime.strptime(launch, "%b %d %Y %H:%M:%S GMT+0000").timetuple())        
                 if(id not in monitor and fix > now):
 
-                    response = requests.post(webhook_url, json = info)
-                    time.sleep(0.5)
-                    if(response.status_code == 429):
-                        print("Rate limited")
-                        time.sleep(10)
-                            
-                    else:
-                        monitor.append(str(id)) 
-                        with open('monitor.txt', 'a') as f:
-                            f.write(f"{id}\n")
-
+                    # Send the webhook
+                    code = sendWebhook(webhook_url, info)
                     print(f"Name: {name} - Id: {id}")  
-                    print(f"Sent webhook {response.status_code}\n")  
+                    print(f"Sent webhook {code}\n")  
 
         except:
             data = None
 
+    # Catch the errors
     if not data:
         print("Error")
         time.sleep(timeout)
