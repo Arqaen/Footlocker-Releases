@@ -82,7 +82,7 @@ while True:
                 img = release['image']
                 gender = release['gender']
                 launch = release['skuLaunchDate']
-                link = "https://www.footlocker.nl" + release['pdpLink']                
+                link = f"https://www.footlocker.{country}" + release['pdpLink']                
     
                 # Format the data
                 info = {
