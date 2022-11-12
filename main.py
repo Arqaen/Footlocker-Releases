@@ -71,7 +71,8 @@ def getRealeses(url, headers):
             return response.json()
         else:
             return None
-    except:
+    except Exception as e:
+        print(e)
         return None
 
 # Main loop for track the releases 
