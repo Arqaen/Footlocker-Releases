@@ -30,7 +30,21 @@ sleep = config['sleep']
 
 #  Url and headers for the request
 url = f"https://www.footlocker.{country}/apigate/release-calendar"
-headers = {"User-Agent": "Mozilla/5.0 (Android 5.0; Mobile; rv:41.0) Gecko/41.0 Firefox/41.0"}
+
+headers = {
+    'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
+    'accept-language': 'es-ES,es;q=0.6',
+    'cache-control': 'no-cache',
+    'dnt': '1',
+    'pragma': 'no-cache',
+    'sec-fetch-dest': 'document',
+    'sec-fetch-mode': 'navigate',
+    'sec-fetch-site': 'none',
+    'sec-fetch-user': '?1',
+    'sec-gpc': '1',
+    'upgrade-insecure-requests': '1',
+    'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.51 Safari/537.69'
+}
 
 # Function to send the webhook and save the id
 def sendWebhook(url, data, id):
@@ -66,7 +80,7 @@ while True:
     # Get the data from the request and the time
     data = getRealeses(url, headers)
     now = time.time()
-
+    
     # If the data is not None
     if data:
 
@@ -113,7 +127,8 @@ while True:
                     print(f"Name: {name} - Id: {id}")  
                     print(f"Sent webhook {code}\n")  
 
-        except:
+        except Exception as e:
+            print(e)
             data = None
 
     # Catch the errors

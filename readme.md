@@ -26,7 +26,7 @@ Examples:
 "es" - Spain
 ```
 
-Also you can adjust the times of the monitor.
+Also you can adjust the times of the monitor in the config file.
 
 
 Start:
