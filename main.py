@@ -70,6 +70,7 @@ def getRealeses(url, headers):
         if response.status_code == 200:
             return response.json()
         else:
+            print(response.status_code)
             return None
     except Exception as e:
         print(e)
