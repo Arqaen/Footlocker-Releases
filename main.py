@@ -1,4 +1,5 @@
 from datetime import datetime
+import cloudscraper
 import requests
 import time
 import json
@@ -28,23 +29,8 @@ timeout = config['timeout']
 hookname = config['name']
 sleep = config['sleep']
 
-#  Url and headers for the request
+#  Url for the request
 url = f"https://www.footlocker.{country}/apigate/release-calendar"
-
-headers = {
-    'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
-    'accept-language': 'es-ES,es;q=0.6',
-    'cache-control': 'no-cache',
-    'dnt': '1',
-    'pragma': 'no-cache',
-    'sec-fetch-dest': 'document',
-    'sec-fetch-mode': 'navigate',
-    'sec-fetch-site': 'none',
-    'sec-fetch-user': '?1',
-    'sec-gpc': '1',
-    'upgrade-insecure-requests': '1',
-    'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.51 Safari/537.69'
-}
 
 # Function to send the webhook and save the id
 def sendWebhook(url, data, id):
@@ -64,9 +50,10 @@ def sendWebhook(url, data, id):
     return response.status_code
 
 # Function to get the request and catchs the errors
-def getRealeses(url, headers):
+def getRealeses(url):
     try:
-        response = requests.get(url, headers=headers)
+        scraper = cloudscraper.create_scraper()
+        response = scraper.get(url)
         if response.status_code == 200:
             return response.json()
         else:
@@ -80,8 +67,9 @@ def getRealeses(url, headers):
 while True:
 
     # Get the data from the request and the time
-    data = getRealeses(url, headers)
+    data = getRealeses(url)
     now = time.time()
+    print("Checking\n")
     
     # If the data is not None
     if data:
